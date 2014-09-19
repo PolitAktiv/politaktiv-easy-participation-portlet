@@ -44,7 +44,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.model.User;
 import com.liferay.portal.theme.ThemeDisplay;
@@ -109,20 +108,6 @@ public class EasyParticipationPortlet extends MVCPortlet {
         super.doView(renderRequest, renderResponse);
     }
 
-
-    public void doSearch(ActionRequest actionRequest,
-            ActionResponse actionResponse) {
-        PortletSession portletSession = actionRequest.getPortletSession();
-        ThemeDisplay themeDisplay = getThemeDisplay(actionRequest);
-
-        String searchString = ParamUtil.get(actionRequest,
-                CommunityViewConstants.SEARCH_STRING, "");
-        SearchEvent searchEvent = new SearchEvent(
-                themeDisplay.getCompanyGroupId(), searchString,
-                currentPortalState);
-        fireEvent(portletSession, searchEvent);
-    }
-
     /**
      * Join the current user (scope) to community with given community id, if
      * user is allowed (function call comes from actionURL)
@@ -150,35 +135,6 @@ public class EasyParticipationPortlet extends MVCPortlet {
         JoinEvent joinEvent = new JoinEvent(currentUserId, communityId,
                 currentPortalState);
         fireEvent(portletSession, joinEvent);
-    }
-
-    /**
-     * Leave the current user (scope) to community with given community id, if
-     * user is allowed (function call comes from actionURL)
-     * 
-     * @param actionRequest
-     * @param actionResponse
-     */
-    public void leaveCommunity(ActionRequest actionRequest,
-            ActionResponse actionResponse) {
-        PortletSession portletSession = actionRequest.getPortletSession();
-        ThemeDisplay themeDisplay = getThemeDisplay(actionRequest);
-        User user = themeDisplay.getUser();
-        long currentUserId = user.getUserId();
-        long communityId = Long.parseLong(actionRequest
-                .getParameter(CommunityViewConstants.COMMUNITY_ID));
-        currentPortalState = new PortalState(
-                themeDisplay.isSignedIn(),
-                themeDisplay.getPortalURL(),
-                themeDisplay.isI18n(),
-                themeDisplay.getI18nPath(),
-                themeDisplay.getDoAsUserId(),
-                currentUserId,
-                participationUtil.initializeUserGroupSet(user, CommunityActionConstants.LEAVE, communityId));
-
-        LeaveEvent leaveEvent = new LeaveEvent(currentUserId, communityId,
-                currentPortalState);
-        fireEvent(portletSession, leaveEvent);
     }
 
     public void requestMembershipToCommunity(ActionRequest actionRequest,
@@ -308,9 +264,11 @@ public class EasyParticipationPortlet extends MVCPortlet {
     }
 
     
-
-
-public void adjustPortalState(ThemeDisplay themeDisplay, PortletSession portletSession) {
+    /**
+     *  method that fires system generated join/leave events.
+     *  This is necessary to hold the data(currentPortalState) consistent with the whole portal.
+     */
+    public void adjustPortalState(ThemeDisplay themeDisplay, PortletSession portletSession) {
         
         long[] userGroupIdArray = {};
         try {
@@ -342,47 +300,45 @@ public void adjustPortalState(ThemeDisplay themeDisplay, PortletSession portletS
     }
 
 
-/**
- * method that joins a community without an action request by the user
- * this exists to adjust the data(currentPortalState) to potential changes made by the user in the communitySelectPortlet
- */
-private void adjustmentJoinCommunity(PortletSession portletSession, ThemeDisplay themeDisplay, long communityId) {
-    User user = themeDisplay.getUser();
-    long currentUserId = user.getUserId();
-    currentPortalState = new PortalState(
-            themeDisplay.isSignedIn(), 
-            themeDisplay.getPortalURL(),
-            themeDisplay.isI18n(), 
-            themeDisplay.getI18nPath(),
-            themeDisplay.getDoAsUserId(), 
-            currentUserId,
-            participationUtil.initializeUserGroupSet(user, CommunityActionConstants.JOIN, communityId));
+    /**
+     * method that joins a community without an action request by the user
+     * this exists to adjust the data(currentPortalState) to potential changes made by the user in the communitySelectPortlet
+     */
+    private void adjustmentJoinCommunity(PortletSession portletSession, ThemeDisplay themeDisplay, long communityId) {
+        User user = themeDisplay.getUser();
+        long currentUserId = user.getUserId();
+        currentPortalState = new PortalState(
+                themeDisplay.isSignedIn(), 
+                themeDisplay.getPortalURL(),
+                themeDisplay.isI18n(), 
+                themeDisplay.getI18nPath(),
+                themeDisplay.getDoAsUserId(), 
+                currentUserId,
+                participationUtil.initializeUserGroupSet(user, CommunityActionConstants.JOIN, communityId));
+    
+        JoinEvent joinEvent = new JoinEvent(currentUserId, communityId,
+                currentPortalState);
+        fireEvent(portletSession, joinEvent);
+    }
 
-    JoinEvent joinEvent = new JoinEvent(currentUserId, communityId,
-            currentPortalState);
-    fireEvent(portletSession, joinEvent);
+    /**
+     * method that leaves a community without an action request by the user
+     * this exists to adjust the data(currentPortalState) to potential changes made by the user in the communitySelectPortlet
+     */
+    private void adjustmentLeaveCommunity(PortletSession portletSession, ThemeDisplay themeDisplay, long communityId) {
+        User user = themeDisplay.getUser();
+        long currentUserId = user.getUserId();
+        currentPortalState = new PortalState(
+                themeDisplay.isSignedIn(),
+                themeDisplay.getPortalURL(),
+                themeDisplay.isI18n(),
+                themeDisplay.getI18nPath(),
+                themeDisplay.getDoAsUserId(),
+                currentUserId,
+                participationUtil.initializeUserGroupSet(user, CommunityActionConstants.LEAVE, communityId));
+    
+        LeaveEvent leaveEvent = new LeaveEvent(currentUserId, communityId,
+                currentPortalState);
+        fireEvent(portletSession, leaveEvent);
 }
-
-/**
- * method that leaves a community without an action request by the user
- * this exists to adjust the data(currentPortalState) to potential changes made by the user in the communitySelectPortlet
- */
-private void adjustmentLeaveCommunity(PortletSession portletSession, ThemeDisplay themeDisplay, long communityId) {
-    User user = themeDisplay.getUser();
-    long currentUserId = user.getUserId();
-    currentPortalState = new PortalState(
-            themeDisplay.isSignedIn(),
-            themeDisplay.getPortalURL(),
-            themeDisplay.isI18n(),
-            themeDisplay.getI18nPath(),
-            themeDisplay.getDoAsUserId(),
-            currentUserId,
-            participationUtil.initializeUserGroupSet(user, CommunityActionConstants.LEAVE, communityId));
-
-    LeaveEvent leaveEvent = new LeaveEvent(currentUserId, communityId,
-            currentPortalState);
-    fireEvent(portletSession, leaveEvent);
-}
-
-
 }
