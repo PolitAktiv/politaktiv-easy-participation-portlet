@@ -7,7 +7,6 @@ import org.politaktiv.community.application.CommunityActionConstants;
 
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.model.User;
-import com.liferay.portal.theme.ThemeDisplay;
 
 public class EasyParticipationPortletUtil {
     

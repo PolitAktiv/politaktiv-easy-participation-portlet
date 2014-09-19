@@ -2,3 +2,4 @@
 /.gradle
 *.class
 /bin/content
+/docroot/WEB-INF/classes
