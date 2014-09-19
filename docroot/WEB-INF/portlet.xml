@@ -13,6 +13,9 @@
 		<supports>
 			<mime-type>text/html</mime-type>
 		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>de</supported-locale>
+		<resource-bundle>content/Language</resource-bundle>
 		<portlet-info>
 			<title>Politaktiv Easy Participation</title>
 			<short-title>Politaktiv Easy Participation</short-title>

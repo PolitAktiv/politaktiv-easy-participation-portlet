@@ -1,6 +1,3 @@
-
-<%@page import="org.politaktiv.easyParticipation.application.MembershipRequestServiceImpl"%>
-<%@page import="java.util.Set"%>
 <%
 /**
  * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
@@ -22,7 +19,6 @@
 <portlet:defineObjects />
 
 	<%
-	
 	//get all communities the user already participates in
     CommunityViewContainer viewContainer = (CommunityViewContainer) renderRequest.getAttribute(CommunityViewConstants.COMMUNITY_VIEW);
 	List<CommunityView> viewList;
@@ -86,15 +82,10 @@
 	
 	<% if(showButton){ %>
 		<aui:form action="<%=actionURL%>">
-		        <aui:input name="participationButton" type="submit" value="<%=(isCurrentCommunityRestricted) ? \"Beantragen\" : \"Beitreten\" %>"/>
+		        <aui:button 
+		        	name="participationButton" 
+		        	type="submit" 
+		        	value="<%=(isCurrentCommunityRestricted) ? LanguageUtil.get(pageContext, \"Request-Membership\") : LanguageUtil.get(pageContext, \"Participate\")%>">
+		        </aui:button>
 		</aui:form>
 	<% } %>
-	
-	<br/>
-	<%	for(CommunityView communityView : viewList){
-	    %>
-	    <%= communityView.getName() %>
-	    <br/>
-	<%
-	} %>
-
