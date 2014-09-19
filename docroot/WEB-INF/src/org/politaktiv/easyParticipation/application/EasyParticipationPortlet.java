@@ -35,17 +35,21 @@ import org.politaktiv.community.application.Event;
 import org.politaktiv.community.application.InitializeEvent;
 import org.politaktiv.community.application.JoinEvent;
 import org.politaktiv.community.application.LeaveEvent;
+import org.politaktiv.community.application.MembershipRequestService;
 import org.politaktiv.community.application.RequestMembershipEvent;
 import org.politaktiv.community.application.SearchEvent;
 import org.politaktiv.community.domain.PortalState;
 import org.politaktiv.infrastructure.liferay.PAParamUtil;
 
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.model.Group;
 import com.liferay.portal.model.User;
+import com.liferay.portal.service.GroupLocalServiceUtil;
 import com.liferay.portal.theme.ThemeDisplay;
 import com.liferay.util.bridges.mvc.MVCPortlet;
 
@@ -60,6 +64,7 @@ public class EasyParticipationPortlet extends MVCPortlet {
     PAParamUtil PaParamUtil = new PAParamUtil();
     EasyParticipationPortletUtil participationUtil = new EasyParticipationPortletUtil();
     PortalState currentPortalState;
+    MembershipRequestService membershiRequestService = new MembershipRequestServiceImpl();
 
     /*
      * (non-Javadoc)
@@ -267,8 +272,9 @@ public class EasyParticipationPortlet extends MVCPortlet {
     /**
      *  method that fires system generated join/leave events.
      *  This is necessary to hold the data(currentPortalState) consistent with the whole portal.
+     * @throws SystemException 
      */
-    public void adjustPortalState(ThemeDisplay themeDisplay, PortletSession portletSession) {
+    public void adjustPortalState(ThemeDisplay themeDisplay, PortletSession portletSession) throws SystemException {
         
         long[] userGroupIdArray = {};
         try {
@@ -297,6 +303,17 @@ public class EasyParticipationPortlet extends MVCPortlet {
             }
         }
         
+        //Case: A communityRequest was made -> update portal state
+        for(Group group : GroupLocalServiceUtil.search(themeDisplay.getCompanyId(), null, null, null, QueryUtil.ALL_POS, QueryUtil.ALL_POS)){
+            try {
+                if(membershiRequestService.isUserMembershipRequestPending(themeDisplay.getUserId(), group.getGroupId())){
+                    adjustmentRequestMembershipToCommunity(portletSession, themeDisplay, group.getGroupId());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } 
+        }
+  
     }
 
 
@@ -340,5 +357,23 @@ public class EasyParticipationPortlet extends MVCPortlet {
         LeaveEvent leaveEvent = new LeaveEvent(currentUserId, communityId,
                 currentPortalState);
         fireEvent(portletSession, leaveEvent);
-}
+    }
+    
+    
+    /**
+     * method that sends a requestMembershipEvent to a community without an action request by the user
+     * this exists to adjust the data(currentPortalState) to potential changes made by the user in the communitySelectPortlet
+     */
+    public void adjustmentRequestMembershipToCommunity(PortletSession portletSession, ThemeDisplay themeDisplay, long communityId) throws PortalException,
+            SystemException {
+        User user = themeDisplay.getUser();
+        long currentUserId = user.getUserId();
+        long currentGuestUserId = themeDisplay.getDefaultUserId();
+        long currentCompanyId = themeDisplay.getCompanyId();
+
+        RequestMembershipEvent rmEvent = new RequestMembershipEvent(
+                currentUserId, currentCompanyId, communityId,
+                currentGuestUserId, currentPortalState);
+        fireEvent(portletSession, rmEvent);
+    }
 }

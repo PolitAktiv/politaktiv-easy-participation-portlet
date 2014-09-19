@@ -1,4 +1,5 @@
 
+<%@page import="org.politaktiv.easyParticipation.application.MembershipRequestServiceImpl"%>
 <%@page import="java.util.Set"%>
 <%
 /**
@@ -43,6 +44,10 @@
 	}
 	//don't show button, if user is on those pages that belong to Politaktiv itself
 	if(currentCommunityName.equals("PolitAktiv")){
+	    showButton = false;
+	}
+	//don't show the button, if a membership request is already pending
+	if(new MembershipRequestServiceImpl().isUserMembershipRequestPending(themeDisplay.getUserId(), currentCommunityId)){
 	    showButton = false;
 	}
 	
