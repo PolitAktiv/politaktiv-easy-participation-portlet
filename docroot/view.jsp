@@ -80,12 +80,33 @@
 	}
 	%>
 	
+	<%
+	// set button contents
+	String buttonValue = 
+	        (isCurrentCommunityRestricted) ? LanguageUtil.get(pageContext, "Request-Membership") : LanguageUtil.get(pageContext, "Participate");
+	
+	String buttonHelpText =
+	        (isCurrentCommunityRestricted) ? LanguageUtil.format(pageContext, "request-help-text-x", currentCommunityName) : LanguageUtil.format(pageContext, "participate-help-text-x", currentCommunityName);
+	%>
+
+	
+	
+	
 	<% if(showButton){ %>
-		<aui:form action="<%=actionURL%>">
-		        <aui:button 
+		<div id="participationButtonContainer" >	
+			<aui:form action="<%=actionURL%>">
+		        <aui:button
 		        	name="participationButton" 
+		        	help-text-tooltip = "<%=buttonHelpText %>"
 		        	type="submit" 
-		        	value="<%=(isCurrentCommunityRestricted) ? LanguageUtil.get(pageContext, \"Request-Membership\") : LanguageUtil.get(pageContext, \"Participate\")%>">
-		        </aui:button>
-		</aui:form>
+		        	value="<%=buttonValue%>">	
+		        </aui:button>      
+			</aui:form>
+		</div>
 	<% } %>
+	
+
+	
+
+	
+	

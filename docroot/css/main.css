@@ -1,0 +1,48 @@
+
+/*Got code from http://codepen.io/cbracco/pen/qzukg*/
+/*code customized*/
+
+
+/* Define attribute for help text */
+[help-text-tooltip] {
+	position: relative;
+	z-index: 2;
+	cursor: pointer;
+}
+
+/* Hide the tooltip content by default */
+[help-text-tooltip]:before,
+[help-text-tooltip]:after {
+  visibility: hidden;
+	opacity: 0;
+	pointer-events: none;
+}
+
+/* Position tooltip below the element */
+[help-text-tooltip]:before {
+	position: absolute;
+	top: 120%; /*this makes the tooltip appear below the element: For a contrary result, replace with "bottom" */
+	left: 50%; /*this makes the tooltip appear in the middle of the element*/
+	margin-up: 5px;
+	margin-left: -80px; /* needs half the value of width*/
+	padding: 7px;
+	width: 160px; /*the width of the tooltip*/
+	-webkit-border-radius: 3px;
+	-moz-border-radius:    3px;
+	border-radius:         3px;
+	background-color: #000;
+	background-color: hsla(0, 0%, 20%, 0.9);
+	color: #fff;
+	content: attr(help-text-tooltip);
+	text-align: left;
+	font-size: 14px;
+	line-height: 1.2;
+}
+
+/* Show tooltip content on hover */
+[help-text-tooltip]:hover:before,
+[help-text-tooltip]:hover:after {
+	visibility: visible;
+	opacity: 1;
+}
+
