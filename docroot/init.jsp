@@ -36,4 +36,6 @@
 <%@page import="com.liferay.portal.kernel.util.Constants" %>
 <%@page import="org.politaktiv.easyParticipation.application.MembershipRequestServiceImpl"%>
 <%@page import="java.util.Set"%>
+<%@page import="com.liferay.portal.model.Group"%>
+<%@page import="com.liferay.portal.model.User"%>
 

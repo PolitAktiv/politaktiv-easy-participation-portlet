@@ -3,17 +3,17 @@ package org.politaktiv.easyParticipation.application;
 import java.util.List;
 import java.util.Set;
 
-import org.politaktiv.community.application.CommunityService;
 import org.politaktiv.community.application.CommunityView;
 import org.politaktiv.community.application.CommunityViewContainer;
 import org.politaktiv.community.application.InitializeEvent;
 import org.politaktiv.community.application.JoinEvent;
 import org.politaktiv.community.application.LeaveEvent;
-import org.politaktiv.community.application.MembershipRequestService;
 import org.politaktiv.community.application.RequestMembershipEvent;
 import org.politaktiv.community.application.SearchEvent;
 import org.politaktiv.community.domain.CommunitiesRepository;
 import org.politaktiv.community.domain.Community;
+import org.politaktiv.community.domain.CommunityService;
+import org.politaktiv.community.domain.MembershipRequestService;
 import org.politaktiv.community.domain.PortalState;
 
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -23,16 +23,14 @@ public class CommunityServiceImpl implements CommunityService{
 
     static final String COMMUNITY_DOMAIN_LIST = "COMMUNITY_DOMAIN_LIST";
     CommunitiesRepository repository = new CommunitiesRepositoryImpl();    
-    MembershipRequestService membershipRequestService = new MembershipRequestServiceImpl();
+    MembershipRequestService membershipRequestService= new MembershipRequestServiceImpl();
     int showOtherLimit = 10;
 
     public void setCommunitiesRepository(CommunitiesRepository repository) {
     this.repository = repository;
     }
 
-    public void setMembershipRequestService(MembershipRequestService membershipRequestService) {
-    this.membershipRequestService = membershipRequestService;
-    }
+
 
     public void setShowOtherLimit(int showOtherLimit) {
     this.showOtherLimit = showOtherLimit;
@@ -246,14 +244,18 @@ public class CommunityServiceImpl implements CommunityService{
 
     public CommunityViewContainer joinCommunity(CommunityViewContainer container, JoinEvent event){
     repository.joinCommunity(event.getUserId(), event.getCommunityId());
-    container.setPortalState(event.getPortalState());
+    PortalState newPortalState = event.getPortalState();
+    newPortalState.addGroupId(event.getCommunityId());
+    container.setPortalState(newPortalState);
     container = searchCommunity(container, container.getNameToSearch());
     return container;
     }
-
+    
     public CommunityViewContainer leaveCommunity(CommunityViewContainer container, LeaveEvent event){
     repository.leaveCommunity(event.getUserId(), event.getCommunityId());
-    container.setPortalState(event.getPortalState());
+    PortalState newPortalState = event.getPortalState();
+    newPortalState.removeGroupId(event.getCommunityId());
+    container.setPortalState(newPortalState);
     container = searchCommunity(container, container.getNameToSearch());
     return container;
     }
@@ -270,4 +272,14 @@ public class CommunityServiceImpl implements CommunityService{
     container = searchCommunity(container, container.getNameToSearch());
     return container;
     }
+
+
+
+    public void setMembershipRequestService(
+            MembershipRequestService membershipRequestService) {
+        this.membershipRequestService = membershipRequestService;
+        
+    }
+
+
 }
