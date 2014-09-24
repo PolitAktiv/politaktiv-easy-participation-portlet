@@ -100,47 +100,6 @@ public class CommunitiesRepositoryImpl implements CommunitiesRepository {
         }
     }
 
-    public void leaveCommunity(long userId, long communityId) {
-
-        // insert userId into array, because of service parameter
-        long userIdArray[] = { userId };
-
-        // remove user from community
-        try {
-            UserServiceUtil.unsetGroupUsers(communityId, userIdArray,
-                    new ServiceContext());
-        } catch (PortalException e) {
-            _log.error("error while trying to leave communitiy: " + e);
-        } catch (SystemException e) {
-            _log.error("error while trying to leave communitiy: " + e);
-        }
-
-    }
-
-    /**
-     * @param companyId
-     *            : companyId wird weiteregereicht an findCommunitiesByCompanyId
-     * @param searchString
-     *            : kann Null sein oder auch Empty, dann return volle
-     *            Communitylist, sonst return nach diesem Begriff gefiltert
-     * @return je nach SearchString
-     */
-    public List<Community> findCommunitiesByCompanyIdAndSearchString(
-            long companyId, String searchString) {
-        List<Community> allCommunities = this
-                .findCommunitiesByCompanyId(companyId);
-        if (searchString == null || searchString.isEmpty())
-            return allCommunities;
-        List<Community> filteredCommunities = new ArrayList<Community>();
-        for (Community community : allCommunities) {
-            String groupName = community.getName();
-            // nicht auf Groß-Kleinschreibung achten
-            if (groupName.toUpperCase().contains(searchString.toUpperCase())) {
-                filteredCommunities.add(community);
-            }
-        }
-        return filteredCommunities;
-    }
 
     public void requestMembershipToCommunity(long currentUserId,
             long currentCompanyId, long communityId, long currentGuestUserId)
@@ -288,5 +247,6 @@ public class CommunitiesRepositoryImpl implements CommunitiesRepository {
         return returnGroupIdsToMembersCount;
 
     }
+    
 
 }

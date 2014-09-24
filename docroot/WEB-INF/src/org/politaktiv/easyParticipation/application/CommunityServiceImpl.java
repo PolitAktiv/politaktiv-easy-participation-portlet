@@ -7,9 +7,7 @@ import org.politaktiv.community.application.CommunityView;
 import org.politaktiv.community.application.CommunityViewContainer;
 import org.politaktiv.community.application.InitializeEvent;
 import org.politaktiv.community.application.JoinEvent;
-import org.politaktiv.community.application.LeaveEvent;
 import org.politaktiv.community.application.RequestMembershipEvent;
-import org.politaktiv.community.application.SearchEvent;
 import org.politaktiv.community.domain.CommunitiesRepository;
 import org.politaktiv.community.domain.Community;
 import org.politaktiv.community.domain.CommunityService;
@@ -25,12 +23,10 @@ public class CommunityServiceImpl implements CommunityService{
     CommunitiesRepository repository = new CommunitiesRepositoryImpl();    
     MembershipRequestService membershipRequestService= new MembershipRequestServiceImpl();
     int showOtherLimit = 10;
-
+    
     public void setCommunitiesRepository(CommunitiesRepository repository) {
     this.repository = repository;
     }
-
-
 
     public void setShowOtherLimit(int showOtherLimit) {
     this.showOtherLimit = showOtherLimit;
@@ -40,42 +36,27 @@ public class CommunityServiceImpl implements CommunityService{
     CommunityViewContainer container = new CommunityViewContainer(initializeEvent.getCurrentCompanyId(), "",
         initializeEvent.getPortalState());
 
-    container = searchCommunity(container, container.getNameToSearch());
+    container = listCommunities(container, container.getNameToSearch());
 
-    return container;
-    }
-
-    public CommunityViewContainer searchCommunity(CommunityViewContainer container, SearchEvent searchEvent) {
-    if (container.isDirty(searchEvent.getPortalState())
-        || !container.getNameToSearch().equals(searchEvent.getNameToSearch())) {
-        container.setPortalState(searchEvent.getPortalState());
-        container.setNameToSearch(searchEvent.getNameToSearch());
-        container = searchCommunity(container, searchEvent.getNameToSearch());
-    }
     return container;
     }
 
     public CommunityViewContainer calculateView(CommunityViewContainer container, PortalState currentPortalState) {
     if (container.isDirty(currentPortalState)) {
         container.setPortalState(currentPortalState);
-        container = searchCommunity(container, container.getNameToSearch());
+        container = listCommunities(container, container.getNameToSearch());
     }
 
     return container;
     }
 
-    CommunityViewContainer searchCommunity(CommunityViewContainer container, String nameToSearch){
+    CommunityViewContainer listCommunities(CommunityViewContainer container, String nameToSearch){
 
     PortalState portalState = container.getPortalState();
     container.resetResults();
 
-    List<Community> communityDomainList;
-    if (nameToSearch.isEmpty()) {
-        communityDomainList = repository.findCommunitiesByCompanyId(container.getCurrentCompanyId());
-    } else {
-        communityDomainList = repository.findCommunitiesByCompanyIdAndSearchString(container.getCurrentCompanyId(),
-            nameToSearch);
-    }
+    List<Community> communityDomainList = repository.findCommunitiesByCompanyId(container.getCurrentCompanyId());
+
 
     Set<Long> userGroupIds = null;
     long userId = 0;
@@ -247,16 +228,7 @@ public class CommunityServiceImpl implements CommunityService{
     PortalState newPortalState = event.getPortalState();
     newPortalState.addGroupId(event.getCommunityId());
     container.setPortalState(newPortalState);
-    container = searchCommunity(container, container.getNameToSearch());
-    return container;
-    }
-    
-    public CommunityViewContainer leaveCommunity(CommunityViewContainer container, LeaveEvent event){
-    repository.leaveCommunity(event.getUserId(), event.getCommunityId());
-    PortalState newPortalState = event.getPortalState();
-    newPortalState.removeGroupId(event.getCommunityId());
-    container.setPortalState(newPortalState);
-    container = searchCommunity(container, container.getNameToSearch());
+    container = listCommunities(container, container.getNameToSearch());
     return container;
     }
 
@@ -269,17 +241,14 @@ public class CommunityServiceImpl implements CommunityService{
         e.printStackTrace();
     }
     container.setPortalState(event.getPortalState());
-    container = searchCommunity(container, container.getNameToSearch());
+    container = listCommunities(container, container.getNameToSearch());
     return container;
     }
-
-
 
     public void setMembershipRequestService(
             MembershipRequestService membershipRequestService) {
         this.membershipRequestService = membershipRequestService;
         
     }
-
 
 }
