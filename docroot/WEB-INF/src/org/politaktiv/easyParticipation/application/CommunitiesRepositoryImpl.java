@@ -19,8 +19,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.politaktiv.community.domain.CommunitiesRepository;
 import org.politaktiv.community.domain.Community;
+import org.politaktiv.easyParticipation.domain.CommunitiesRepository;
 
 import com.liferay.counter.service.CounterLocalServiceUtil;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -246,6 +246,13 @@ public class CommunitiesRepositoryImpl implements CommunitiesRepository {
 
         return returnGroupIdsToMembersCount;
 
+    }
+
+    @Override
+    public List<Community> findCommunitiesByCompanyIdAndSearchString(long arg0,
+            String arg1) {
+        _log.error("PolitaktivEasyParticipation-Portlet tried to perform a Search. The PolitaktivEasyParticipation-Portlet is only for joining purposes");
+        return null;
     }
     
 

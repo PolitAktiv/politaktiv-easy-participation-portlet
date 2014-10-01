@@ -8,12 +8,16 @@ import org.politaktiv.community.application.CommunityViewContainer;
 import org.politaktiv.community.application.InitializeEvent;
 import org.politaktiv.community.application.JoinEvent;
 import org.politaktiv.community.application.RequestMembershipEvent;
-import org.politaktiv.community.domain.CommunitiesRepository;
+import org.politaktiv.community.application.SearchEvent;
 import org.politaktiv.community.domain.Community;
-import org.politaktiv.community.domain.CommunityService;
+import org.politaktiv.community.domain.MainCommunitiesRepository;
 import org.politaktiv.community.domain.MembershipRequestService;
 import org.politaktiv.community.domain.PortalState;
+import org.politaktiv.easyParticipation.domain.CommunitiesRepository;
+import org.politaktiv.easyParticipation.domain.CommunityService;
 
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.util.PortalUtil;
 
@@ -23,10 +27,11 @@ public class CommunityServiceImpl implements CommunityService{
     CommunitiesRepository repository = new CommunitiesRepositoryImpl();    
     MembershipRequestService membershipRequestService= new MembershipRequestServiceImpl();
     int showOtherLimit = 10;
+    private static Log _log = LogFactoryUtil.getLog(CommunityServiceImpl.class);
     
-    public void setCommunitiesRepository(CommunitiesRepository repository) {
-    this.repository = repository;
-    }
+    public <T extends MainCommunitiesRepository> void setCommunitiesRepository(T communitiesRepository) {
+        this.repository = (CommunitiesRepository)repository;
+    } 
 
     public void setShowOtherLimit(int showOtherLimit) {
     this.showOtherLimit = showOtherLimit;
@@ -249,6 +254,11 @@ public class CommunityServiceImpl implements CommunityService{
             MembershipRequestService membershipRequestService) {
         this.membershipRequestService = membershipRequestService;
         
+    }
+
+    public CommunityViewContainer searchCommunity(CommunityViewContainer container, SearchEvent searchEvent) {
+        _log.error("PolitaktivEasyParticipation-Portlet attempted to perform a SearchEvent. The PolitaktivEasyParticipation-Portlet is only for joining purposes");
+        return container;
     }
 
 }

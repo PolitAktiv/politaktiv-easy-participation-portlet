@@ -35,9 +35,9 @@ import org.politaktiv.community.application.Event;
 import org.politaktiv.community.application.InitializeEvent;
 import org.politaktiv.community.application.JoinEvent;
 import org.politaktiv.community.application.RequestMembershipEvent;
-import org.politaktiv.community.domain.CommunityService;
 import org.politaktiv.community.domain.MembershipRequestService;
 import org.politaktiv.community.domain.PortalState;
+import org.politaktiv.easyParticipation.domain.CommunityService;
 import org.politaktiv.infrastructure.liferay.PAParamUtil;
 
 import com.liferay.portal.kernel.exception.PortalException;
