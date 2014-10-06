@@ -1,4 +1,3 @@
-
 <%
 /**
  * Copyright (c) 2000-2013 Liferay, Inc. All rights reserved.
@@ -20,50 +19,51 @@
 <portlet:defineObjects />
 
 	<%
-	
-	//get id of the community the user visites at the moment
-	ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
-	User user = themeDisplay.getUser();
-	long currentCommunityId = themeDisplay.getScopeGroupId();
-	String currentCommunityName = themeDisplay.getScopeGroupName();
-	List<Group> currentUserGroups = user.getGroups();
-	
-	//Decide whether Button should be rendered:
-	boolean showButton = true;
-	
-	//don't show button, if User isn't logged in
-	if(!themeDisplay.isSignedIn()){
-	    showButton = false;
-	}
-	
-	//don't show button, if User is already member of current Group
-	if(currentUserGroups.contains(themeDisplay.getScopeGroup())){
-	    showButton = false;
-	}
-		
-	//don't show button, if user is on those pages that belong to Politaktiv itself
-	if(currentCommunityName.equals(GroupConstants.GUEST)){
-	    showButton = false;
-	}
-	
-	//don't show button, if user is on those pages that belong to the control panel
-	if(currentCommunityName.equals(GroupConstants.CONTROL_PANEL)){
-	    showButton = false;
-	}
-	//don't show the button, if a membership request is already pending
-	if(new MembershipRequestServiceImpl().isUserMembershipRequestPending(themeDisplay.getUserId(), currentCommunityId)){
-	    showButton = false;
-	}
-		
-	//Find out whether the current page is a restricted community
-	boolean isCurrentCommunityRestricted = false;
-	for(CommunityView communityView :  ((CommunityViewContainer) renderRequest.getAttribute(CommunityViewConstants.COMMUNITY_VIEW)).getRestrictedCommunities()){
-	    if(Long.parseLong(communityView.getId()) == currentCommunityId){
-	        isCurrentCommunityRestricted = true;
-	        break;
-	    }
-	}
-	
+	    //get id of the community the user visites at the moment
+			ThemeDisplay themeDisplay = (ThemeDisplay) request.getAttribute(WebKeys.THEME_DISPLAY);
+			User user = themeDisplay.getUser();
+			long currentCommunityId = themeDisplay.getScopeGroupId();
+			String currentCommunityName = themeDisplay.getScopeGroupName();
+			List<Group> currentUserGroups = user.getGroups();
+			
+			//Decide whether Button should be rendered:
+			boolean showButton = true;
+			
+			//don't show button, if User isn't logged in
+			if(!themeDisplay.isSignedIn()){
+			    showButton = false;
+			}
+			
+			//don't show button, if User is already member of current Group
+			if(currentUserGroups.contains(themeDisplay.getScopeGroup())){
+			    showButton = false;
+			}
+				
+			//don't show button, if user is on those pages that belong to Politaktiv itself
+			if(currentCommunityName.equals(GroupConstants.GUEST)){
+			    showButton = false;
+			}
+			
+			//don't show button, if user is on those pages that belong to the control panel
+			if(currentCommunityName.equals(GroupConstants.CONTROL_PANEL)){
+			    showButton = false;
+			}
+			//don't show the button, if a membership request is already pending
+			if(new MembershipRequestServiceImpl().isUserMembershipRequestPending(themeDisplay.getUserId(), currentCommunityId)){
+			    showButton = false;
+			}
+				
+			//Find out whether the current page is a restricted community
+			byte[] serializedContainer = (byte[])(renderRequest.getAttribute(CommunityViewConstants.COMMUNITY_VIEW));
+			CommunityViewContainer viewContainer = (CommunityViewContainer) CommunitySerializationUtil.deserializeContainer(serializedContainer); 
+			
+			boolean isCurrentCommunityRestricted = false;
+			for(CommunityView communityView :  viewContainer.getRestrictedCommunities()){
+			    if(Long.parseLong(communityView.getId()) == currentCommunityId){
+			        isCurrentCommunityRestricted = true;
+			        break;
+			    }
+			}
 	%>
 
 	<!-- generate actionUrls -->
@@ -98,8 +98,6 @@
 	%>
 
 	
-	
-	
 	<% if(showButton){ %>
 		<div id="participationButtonContainer" >	
 			<aui:form action="<%=actionURL%>">
@@ -112,6 +110,7 @@
 			</aui:form>
 		</div>
 	<% } %>
+
 	
 
 	

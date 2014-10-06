@@ -38,4 +38,4 @@
 <%@page import="java.util.Set"%>
 <%@page import="com.liferay.portal.model.Group"%>
 <%@page import="com.liferay.portal.model.User"%>
-
+<%@page import="org.politaktiv.community.application.CommunitySerializationUtil"%>
