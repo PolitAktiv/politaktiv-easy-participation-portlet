@@ -45,7 +45,7 @@
 			}
 			
 			//don't show button, if user is on those pages that belong to the control panel
-			if(currentCommunityName.equals(GroupConstants.CONTROL_PANEL)){
+			if(currentCommunityName.equals(GroupConstants.GLOBAL)){
 			    showButton = false;
 			}
 			//don't show the button, if a membership request is already pending
@@ -109,11 +109,4 @@
 		        </aui:button>      
 			</aui:form>
 		</div>
-	<% } %>
-
-	
-
-	
-
-	
-	
+	<% } %>	
