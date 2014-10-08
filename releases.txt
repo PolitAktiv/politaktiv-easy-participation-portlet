@@ -1,0 +1,8 @@
+ReleaseNotes:
+
+10-08-2014
+-----------------------------
+first version of politaktiv-easy-participation-portlet
+funcionality:
+- provides a button to request membership to/join a community
+- is designed to work consistent with politaktiv-community-select-portlet
