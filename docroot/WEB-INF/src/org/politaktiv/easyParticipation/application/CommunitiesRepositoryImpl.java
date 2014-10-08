@@ -46,6 +46,7 @@ import com.liferay.portlet.documentlibrary.model.DLFileEntry;
 public class CommunitiesRepositoryImpl implements CommunitiesRepository {
 
     private static Log _log = LogFactoryUtil.getLog(CommunitiesRepositoryImpl.class);
+    private CommunityFactoryImpl communityFactory = new CommunityFactoryImpl();
 
     public List<Community> findCommunitiesByCompanyId(long companyId) {
 
@@ -61,7 +62,7 @@ public class CommunitiesRepositoryImpl implements CommunitiesRepository {
 
             if (imageIdsToGroupIdsWithNameLogo.containsKey(group.getGroupId())) {
                 returnCommunities
-                        .add(new CommunityFactoryImpl().createCommunity(
+                        .add(communityFactory.createCommunity(
                                 group.getName(),
                                 group.getGroupId(),
                                 imageIdsToGroupIdsWithNameLogo.get(group
@@ -70,7 +71,7 @@ public class CommunitiesRepositoryImpl implements CommunitiesRepository {
                                 group.getFriendlyURL(), group.getType()));
             } else {
                 returnCommunities
-                        .add(new CommunityFactoryImpl().createCommunity(
+                        .add(communityFactory.createCommunity(
                                 group.getName(),
                                 group.getGroupId(),
                                 numberOfMembersByGroupId.get(group.getGroupId()),

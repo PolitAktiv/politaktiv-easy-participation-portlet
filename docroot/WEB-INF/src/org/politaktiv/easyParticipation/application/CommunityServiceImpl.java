@@ -28,10 +28,6 @@ public class CommunityServiceImpl implements CommunityService{
     MembershipRequestService membershipRequestService= new MembershipRequestServiceImpl();
     int showOtherLimit = 10;
     private static Log _log = LogFactoryUtil.getLog(CommunityServiceImpl.class);
-    
-    public <T extends MainCommunitiesRepository> void setCommunitiesRepository(T communitiesRepository) {
-        this.repository = (CommunitiesRepository)repository;
-    } 
 
     public void setShowOtherLimit(int showOtherLimit) {
     this.showOtherLimit = showOtherLimit;
