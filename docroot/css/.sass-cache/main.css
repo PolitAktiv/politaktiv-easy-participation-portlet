@@ -43,3 +43,24 @@
   visibility: visible;
   opacity: 1; }
 
+/* Portlet-CSS */
+.portlet-topper, .portlet-title {
+  visibility: hidden;
+  height: 0px;
+  width: 0px; }
+
+.aui .portlet-content, .portlet-content {
+  padding: 0px !important;
+  border-color: #FFF !important; }
+
+.aui .portlet {
+  margin-bottom: 0px !important; }
+
+.aui .dockbar-split .dockbar .navbar-inner .nav-account-controls {
+  border-top: 0px !important; }
+
+.aui .navbar .btn {
+  margin-top: 6px !important;
+  margin-right: 5px !important;
+  margin-left: 5px !important; }
+
