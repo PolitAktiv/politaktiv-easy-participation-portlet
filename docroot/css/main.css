@@ -47,7 +47,7 @@
 }
 
 /* Portlet-CSS */
-.portlet-topper, .portlet-title{
+#portlet_politaktiveasyparticipation_WAR_politaktiveasyparticipationportlet > .portlet-topper{
 	visibility: hidden;
 	height: 0px;
 	width: 0px;
