@@ -1,6 +1,11 @@
 ReleaseNotes:
 
-10-08-2014
+6.2.1.2 - 11-04-2014
+-----------------------------
+- made portlet instanceable
+
+
+6.2.1.1 - 10-08-2014
 -----------------------------
 first version of politaktiv-easy-participation-portlet
 funcionality:
