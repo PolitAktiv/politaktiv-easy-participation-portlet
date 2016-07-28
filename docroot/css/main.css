@@ -82,7 +82,7 @@
 }
 
 /* Do not show controls for embedded portlet*/
-.portlet-borderless-bar{
+#participationButton .portlet-borderless-bar{
 	display: none;
 }
 
