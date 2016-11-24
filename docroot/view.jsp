@@ -27,30 +27,36 @@
 			List<Group> currentUserGroups = user.getGroups();
 			
 			//Decide whether Button should be rendered:
-			boolean showButton = true;
+			boolean renderButton = true;
 			
 			//don't show button, if User isn't logged in
 			if(!themeDisplay.isSignedIn()){
-			    showButton = false;
+			    renderButton = false;
 			}
 			
 			//don't show button, if User is already member of current Group
 			if(currentUserGroups.contains(themeDisplay.getScopeGroup())){
-			    showButton = false;
+			    renderButton = false;
+			}
+			
+			//don't show button, if group is not an open group
+			if (themeDisplay.getScopeGroup().getType() == GroupConstants.TYPE_SITE_RESTRICTED 
+				|| themeDisplay.getScopeGroup().getType() == GroupConstants.TYPE_SITE_PRIVATE ){
+				renderButton = false;
 			}
 				
 			//don't show button, if user is on those pages that belong to Politaktiv itself
 			if(currentCommunityName.equals(GroupConstants.GUEST)){
-			    showButton = false;
+			    renderButton = false;
 			}
 			
 			//don't show button, if user is on those pages that belong to the control panel
 			if(currentCommunityName.equals(GroupConstants.GLOBAL)){
-			    showButton = false;
+			    renderButton = false;
 			}
 			//don't show the button, if a membership request is already pending
 			if(new MembershipRequestServiceImpl().isUserMembershipRequestPending(themeDisplay.getUserId(), currentCommunityId)){
-			    showButton = false;
+			    renderButton = false;
 			}
 				
 			//Find out whether the current page is a restricted community
@@ -98,7 +104,7 @@
 	%>
 
 	
-	<% if(showButton){ %>
+	<% if(renderButton){ %>
 		<div id="participationButtonContainer" >	
 			<aui:form action="<%=actionURL%>">
 		        <aui:button
