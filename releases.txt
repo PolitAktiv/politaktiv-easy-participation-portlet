@@ -1,5 +1,9 @@
 ReleaseNotes:
 
+6.2.1.5 - 24-11-2016
+-----------------------------
+- do not show button in non-open groups
+
 6.2.1.4 - 28-07-2016
 -----------------------------
 - fixed control bar bug
